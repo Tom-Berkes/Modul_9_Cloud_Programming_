@@ -1,0 +1,9 @@
+AWS/.terraform.lock.hcl
+AWS/.terraform/providers/registry.terraform.io/hashicorp/aws/5.94.1/windows_amd64/LICENSE.txt
+AWS/.terraform/providers/registry.terraform.io/hashicorp/aws/5.94.1/windows_amd64/terraform-provider-aws_v5.94.1_x5.exe
+AWS/.terraform/providers/registry.terraform.io/hashicorp/random/3.7.1/windows_amd64/LICENSE.txt
+AWS/.terraform/providers/registry.terraform.io/hashicorp/random/3.7.1/windows_amd64/terraform-provider-random_v3.7.1_x5.exe
+Azure/.terraform/providers/registry.terraform.io/hashicorp/azurerm/4.26.0/windows_amd64/LICENSE.txt
+Azure/.terraform/providers/registry.terraform.io/hashicorp/random/3.7.1/windows_amd64/LICENSE.txt
+Azure/.terraform/providers/registry.terraform.io/hashicorp/random/3.7.1/windows_amd64/terraform-provider-random_v3.7.1_x5.exe
+Azure/.terraform.lock.hcl
