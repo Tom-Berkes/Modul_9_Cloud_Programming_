@@ -7,14 +7,37 @@ resource "random_id" "bucket_suffix" {
 }
 
 resource "aws_s3_bucket" "website_bucket" {
-  bucket = "hello-world-website-${random_id.bucket_suffix.hex}"
+  bucket = "${var.bucket_name_prefix}-${random_id.bucket_suffix.hex}"
 
   website {
-    index_document = "index.html"
+    index_document = var.index_document
   }
 
-  tags = {
-    Name = "StaticWebsite"
+  tags = var.tags
+}
+
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  rule {
+    id     = "cleanup"
+    status = "Enabled"
+
+    filter {
+      prefix = ""
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
   }
 }
 
@@ -43,15 +66,18 @@ resource "aws_s3_bucket_policy" "public_read" {
 
 resource "aws_s3_object" "html" {
   bucket       = aws_s3_bucket.website_bucket.id
-  key          = "index.html"
-  source       = "index.html"
+  key          = var.index_document
+  source       = var.index_document
   content_type = "text/html"
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
+  count = var.cloudfront_enabled ? 1 : 0
+
   origin {
     domain_name = aws_s3_bucket.website_bucket.bucket_regional_domain_name
     origin_id   = "S3Origin"
+
     custom_origin_config {
       http_port              = 80
       https_port             = 443
@@ -62,7 +88,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  default_root_object = "index.html"
+  default_root_object = var.index_document
 
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD"]
@@ -89,7 +115,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     minimum_protocol_version       = "TLSv1"
   }
 
-  tags = {
-    Name = "StaticWebsiteCDN"
-  }
+  tags = var.tags
 }
+
+
